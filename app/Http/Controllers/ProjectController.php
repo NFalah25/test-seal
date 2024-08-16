@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
-use App\Models\projects;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -15,8 +15,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $project = Project::all();
-        
+        return ProjectResource::collection(Project::all());
     }
 
     /**
@@ -24,30 +23,42 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $project = Project::create([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return new ProjectResource($project);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(projects $projects)
+    public function show(Project $project)
     {
-        //
+        return new ProjectResource($project);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, projects $projects)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $project->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return new ProjectResource($project);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(projects $projects)
+    public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        return response()->noContent();
     }
 }
